@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Generator with GPT</title>
+
+  <link rel="stylesheet" type="text/css" href="text.css">
+</head>
+<body>
+
+  <div class='ai-image-generator'>
+    <div class='header'> Text-Content <span>
+        Generator
+    </span>
+    </div>
+  </div>
+
+  <div class="search-box">
+    <input id="inputPhrase" class="search-input" type="text" placeholder='Describe what you want'></input>
+  </div>
+
+  <button class="generate-btn" onclick="generateText()">Generate</button>
+  
+  <p id="output"></p>
+
+  <script>
+    const apiKey = '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';
+    const huggingFaceUrl = 'https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta';
+
+    async function generateText() {
+      const userPhrase = document.getElementById('inputPhrase').value;
+
+      try {
+        const response = await fetch(huggingFaceUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            inputs: userPhrase,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        document.getElementById('output').innerText = data[0].generated_text; // Adjust based on the actual structure of the response
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('output').innerText = 'Error generating text. Please try again.';
+      }
+    }
+  </script>
+</body>
+</html>
